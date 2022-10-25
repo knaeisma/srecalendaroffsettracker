@@ -1,0 +1,161 @@
+{% extends "srecalendarappbase.html" %}
+
+{% block css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/offset.css'%}">
+{% endblock %}
+
+{% block content %}
+
+<head>
+<body>
+  <div class="container">
+    <br />
+    <div class="row">
+      <h1> Global SRE Offset Tracker</h1>
+      <h6> Offset Schedule Tracker</h6>
+    </div>
+  
+  <!----  BUTTON 
+    <div class="container">
+    <div class="row">
+      <div class="col text-center">
+        <button class="btn btn-success" href="#" id="button">+ Add Offset Hours</button>  
+      </div>
+    </div>
+  </div> ----->
+
+  
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- JS Dependencies -->
+    <script data-require="jquery@*" data-semver="3.1.1" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script data-require="moment.js@*" data-semver="2.14.1" src="https://npmcdn.com/moment@2.14.1"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.3.0/fullcalendar.min.js"></script>
+    
+    <!-- CSS Styles -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.3.0/fullcalendar.min.css" />
+  </head>
+
+  <body>
+    <div id="calendar"></div>
+
+    <script type="text/javascript">
+        
+$(document).ready(function() {
+  // Fetch Events
+  $.ajax({
+      url: "https://data.oregon.gov/resource/yid5-c4eq.json",
+    method: "GET",
+    datatype: "json",
+    data: {
+      "$where" : "start_date_time > '" + moment().subtract(31, 'days').format("YYYY-MM-DDT00:00:00") + "'",
+      "city" : "Manila",
+      "$order" : "start_date_time DESC"
+    }
+  }).done(function(response) {
+    // Parse our events into an event object for FullCalendar
+    var events = [];
+    $.each(response, function(idx, e) {
+      events.push({
+        start: e.start_date_time,
+        end: e.end_date_time,
+        title: e.meeting_title,
+        url: e.web_link
+      });
+    });
+    $('#calendar').fullCalendar({
+      events: events
+    });
+  });
+});
+    </script>
+  </body>
+</html>
+
+
+<div class="container">
+    <br />
+    <div class="row">
+        <h1> Global SRE Offset Tracker</h1>
+        <h6> Offset Schedule Tracker</h6>
+    </div>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col text-right">
+                <a class="btn btn-success" href="#" onclick="openOffset()"> + Add Offset Hours </a>      
+            </div>
+        </div>
+    </div>
+
+
+
+  <table class="styled-table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Bank of Offset</th>
+            <th>Available Hours</th>
+            <th>Hours to Expire in a Week</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>User 1</td>
+            <td>4.5</td>
+            <td>10</td>
+            <td>0</td>
+        </tr>
+        <tr class="active-row">
+            <td>User 2</td>
+            <td>3</td>
+        </tr>
+        <tr>
+          <td>User 3</td>
+          <td>6</td>
+      </tr>        
+        <!-- and so on... -->
+    </tbody>
+  </table>
+
+  <div class="form-popup" id="myForm">
+    <form action="/action_page.php" class="form-container">
+      <h1>Add Offset Credits</h1>
+  
+      <label for="user"><b>User</b></label>
+      <input type="text" placeholder="Enter Username" name="username" id="username" required>
+  
+      <label for="type"><b>Type</b></label>
+      <select id="type" name="offsetType">
+        <option value="addOffset">Add Offset Credits</option>
+        <option value="useOffset">Use Offset Credits</option>
+      </select>
+
+      <label for="offsetStartDate">Offset Start Date</label>
+      <input type="datetime-local" id="offsetStartDate" name="offsetStartDate">
+
+      <label for="offsetEndDate">Offset End Date</label>
+      <input type="datetime-local" id="offsetEndDate" name="offsetEndDate">
+
+      <button type="submit" class="btn">Login</button>
+      <button type="button" class="btn cancel" onclick="closeOffset()">Close</button>
+    </form>
+  </div>
+
+  <script>
+    function openOffset() {
+      document.getElementById("myForm").style.display = "block";
+    }
+    
+    function closeOffset() {
+      document.getElementById("myForm").style.display = "none";
+    }
+  </script>
+
+
+
+
+{% endblock %}
+
